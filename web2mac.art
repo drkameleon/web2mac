@@ -51,6 +51,25 @@ createApp: function [name, url][
             <string>|name|</string>
             <key>CFBundleName</key>
             <string>|name|</string>
+            <key>NSHighResolutionCapable</key>
+	        <true/>
+            <key>NSAppTransportSecurity</key>
+            <dict>
+                <key>NSExceptionDomains</key>
+                <dict>
+                    <key></key>
+                    <dict>
+                        <key>NSExceptionAllowsInsecureHTTPLoads</key>
+                        <true/>
+                        <key>NSIncludesSubdomains</key>
+                        <true/>
+                    </dict>
+                </dict>
+            </dict>
+            <key>NSCameraUsageDescription</key>
+            <string>Request camera access</string>
+            <key>NSMicrophoneUsageDescription</key>
+            <string>Request microphone access</string>
         </dict>
         </plist>
     }
