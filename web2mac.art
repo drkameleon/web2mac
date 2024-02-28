@@ -17,7 +17,7 @@ createApp: function [name, url][
     ; the main script
     write ~"|dest|/MacOS/launcher" ~{
         #!/bin/sh
-        "exec" "`dirname $0`/arturo" "`dirname $0`/../Resources/main.art"
+        "exec" "`dirname $0`/|extract.basename sys\binary|" "`dirname $0`/../Resources/main.art"
     }
     ; and make it executable (important!)
     execute ~"sudo chmod +x |dest|/MacOS/launcher"
