@@ -1,0 +1,63 @@
+#!/usr/bin/env arturo
+
+createApp: function [name, url][
+    ; the App we are going to create
+    dest: ~"|name|.app/Contents"
+    
+    ; let's create the main directory structure
+    write.directory ~"|dest|/MacOS" ø
+    write.directory ~"|dest|/Resources" ø
+
+    ; let's move the Arturo binary into place
+    copy sys\binary ~"|dest|/MacOS/arturo"
+
+    ; let's set up our "launcher" script
+    ; this is a regular script that executes
+    ; the bundled Arturo binary along with
+    ; the main script
+    write ~"|dest|/MacOS/launcher" ~{
+        #!/bin/sh
+        "exec" "`dirname $0`/arturo" "`dirname $0`/../Resources/main.art"
+    }
+    ; and make it executable (important!)
+    execute ~"sudo chmod +x |dest|/MacOS/launcher"
+
+    ; the main Arturo script
+    ; (not really much to it, just a webview
+    ; pointing to the URL in question)
+    write ~"|dest|/Resources/main.art" ~{
+        webview.title:"|name|" "|url|"
+    }
+
+    ; and the main Info.plist -
+    ; so that the .app bundle is recognised
+    ; as a valid application by macOS
+    write ~"|dest|/Info.plist" ~{
+        <?xml version="1.0" encoding="UTF-8"?>
+        <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+        <plist version="1.0">
+        <dict>
+            <key>CFBundleExecutable</key>
+            <string>launcher</string>
+            <key>CFBundleSignature</key>
+            <string>MYAP</string>
+            <key>CFBundlePackageType</key>
+            <string>APPL</string>
+            <key>CFBundleVersion</key>
+            <string>1.0.0</string>
+            <key>CFBundleIdentifier</key>
+            <string>co.ensili.|name|</string>
+            <key>CFBundleDisplayName</key>
+            <string>|name|</string>
+            <key>CFBundleName</key>
+            <string>|name|</string>
+        </dict>
+        </plist>
+    }
+]
+
+; the script is meant to be used like:
+;   ./web2mac.art MyAppName https://some.url.com
+
+if standalone? ::
+    createApp arg\0 arg\1
